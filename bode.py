@@ -74,7 +74,9 @@ awg = fygen.FYGen(DEFAULT_PORT)
 
 
 # AWG_MAX_FREQ = awg.getinfo_devicetype()
-AWG_MAX_FREQ = 60000000
+AWG_MODEL = awg.get_model()
+AWG_MAX_FREQ = float(AWG_MODEL[7:9])
+
 print("Maximum Generator Frequency: %d MHz"% AWG_MAX_FREQ)
 if MAX_FREQ > AWG_MAX_FREQ * 1e6:
     exit("Your MAX_FREQ is higher than your AWG can achieve!")
