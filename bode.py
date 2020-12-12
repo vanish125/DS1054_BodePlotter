@@ -1,11 +1,12 @@
 # bode.py
-# Program to plot bode diagrams using a DS1054Z and a JDS6600
+# Program to plot bode diagrams using a DS1054Z and a jds6600
 
 # Jan Böhmer (c) 2019
 # published under MIT license. See file "LICENSE" for full license text
 
 
-from jds6600 import *
+# from jds6600 import * 1st try
+import fygen
 
 import numpy as np
 import time
@@ -21,7 +22,7 @@ parser = argparse.ArgumentParser(description="This program plots Bode Diagrams o
 parser.add_argument('MIN_FREQ', metavar='min', type=float, help="The minimum frequency for which should be tested")
 parser.add_argument('MAX_FREQ', metavar='max', type=float, help="The maximum frequency for which should be tested")
 parser.add_argument('COUNT', metavar='N', nargs="?", default=50, type=int, help='The number of frequencies for which should be probed')
-parser.add_argument("--awg_port", dest="AWG_PORT", default="COM3", help="The serial port where the JDS6600 is connected to")
+parser.add_argument("--awg_port", dest="AWG_PORT", default="/dev/ttyUSB0", help="The serial port where the AWG is connected to")
 parser.add_argument("--ds_ip", default="auto", dest="OSC_IP", help="The IP address of the DS1054Z. Set to auto, to auto discover the oscilloscope via Zeroconf")
 parser.add_argument("--linear", dest="LINEAR", action="store_true", help="Set this flag to use a linear scale")
 parser.add_argument("--awg_voltage", dest="VOLTAGE", default=5, type=float, help="The amplitude of the signal used for the generator")
@@ -63,20 +64,24 @@ if STEP_COUNT <= 0:
 
 TIMEOUT = args.TIMEOUT
 
-AWG_CHANNEL = 1
+AWG_CHANNEL = 0          # //channel 1
 AWG_VOLT = args.VOLTAGE
 
 print("Init AWG")
 
-awg = jds6600(DEFAULT_PORT)
+#  awg = jds6600(DEFAULT_PORT)
+awg = fygen.FYGen(DEFAULT_PORT)
 
-AWG_MAX_FREQ = awg.getinfo_devicetype()
+
+# AWG_MAX_FREQ = awg.getinfo_devicetype()
+AWG_MAX_FREQ = 60000000
 print("Maximum Generator Frequency: %d MHz"% AWG_MAX_FREQ)
 if MAX_FREQ > AWG_MAX_FREQ * 1e6:
     exit("Your MAX_FREQ is higher than your AWG can achieve!")
 
 # We use sine for sweep
-awg.setwaveform(AWG_CHANNEL, "sine")
+# awg.setwaveform(AWG_CHANNEL, "sine")
+awg.set(AWG_CHANNEL, enable=True, wave='sin')
 
 # Init scope
 scope = DS1054Z(OSC_IP)
@@ -101,17 +106,17 @@ else:
     freqs = np.linspace(MIN_FREQ, MAX_FREQ, num=STEP_COUNT)
 
 # Set amplitude
-awg.setamplitude(AWG_CHANNEL, AWG_VOLT)
+awg.set(AWG_CHANNEL, volts=AWG_VOLT, enable=True)
 
 volts = list()
 phases = list()
 
 # We have to wait a bit before we measure the first value
-awg.setfrequency(AWG_CHANNEL, float(freqs[0]))
+awg.set(AWG_CHANNEL, freq_hz=float(freqs[0]), enable=True)
 time.sleep(0.05)
 
 for freq in freqs:
-    awg.setfrequency(AWG_CHANNEL, float(freq))
+    awg.set(AWG_CHANNEL, freq_hz=float(freq), enable=True)
     time.sleep(TIMEOUT)
 
     if not args.NORMALIZE:
