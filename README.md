@@ -53,3 +53,5 @@ Here are some example measurements:
 This program is licensed under the MIT License. See [LICENSE](https://github.com/jbtronics/DS1054_BodePlotter/blob/master/LICENSE) file for more info.
 
 The jds6600.py library was taken from [here](https://github.com/on1arf/jds6600_python)
+
+The FyGen.py library was taken from https://github.com/mattwach/fygen
