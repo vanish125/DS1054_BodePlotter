@@ -1,3 +1,5 @@
+Fork of the DS1054Z_BodePlotter adapted to use Feeltech FY6900 or similar signal generators
+
 # DS1054Z_BodePlotter
 A Python program that plots Bode plots of a component using a Rigol DS1054Z Oscilloscope and a JDS6600 DDS Generator.
 
