@@ -1,5 +1,6 @@
 Fork of the DS1054Z_BodePlotter adapted to use Feeltech FY6900 or similar signal generators
 
+
 # DS1054Z_BodePlotter
 A Python program that plots Bode plots of a component using a Rigol DS1054Z Oscilloscope and a JDS6600 DDS Generator.
 
@@ -13,9 +14,9 @@ Further you will need to install pyserial, DS1054Z, and (optional) zeroconf. You
 ``` pip install pyserial ds1054z zeroconf ```
 
 # Hardware setup
-Connect your JDS6600 via USB with you computer and connect the DS1054Z to network (via Ethernet port).
+Connect your Feeltech FY6900 AWG via USB with you computer and connect the DS1054Z to network (via Ethernet port).
 
-Connect the Channel 1 output of the JDS6600 to CH1 of the DS1054Z and to the input of the component you want to test (DUT = Device under test). Connect CH2 of the DS1054Z to the output of the DUT.
+Connect the Channel 1 output of the FY6900 to CH1 of the DS1054Z and to the input of the component you want to test (DUT = Device under test). Connect CH2 of the DS1054Z to the output of the DUT.
 
 ![Schematic](https://github.com/jbtronics/DS1054_BodePlotter/raw/master/examples/BodePlotter_schematic.svg?sanitize=true)
 
@@ -51,7 +52,5 @@ Here are some example measurements:
 
 # License
 This program is licensed under the MIT License. See [LICENSE](https://github.com/jbtronics/DS1054_BodePlotter/blob/master/LICENSE) file for more info.
-
-The jds6600.py library was taken from [here](https://github.com/on1arf/jds6600_python)
 
 The FyGen.py library was taken from https://github.com/mattwach/fygen
