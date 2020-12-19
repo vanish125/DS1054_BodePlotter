@@ -116,11 +116,27 @@ phases = list()
 # We have to wait a bit before we measure the first value
 awg.set(AWG_CHANNEL, freq_hz=float(freqs[0]), enable=True)
 time.sleep(0.05)
+ 
+# initialize voltage reading to see if scope is set in correct vertical scale, in case vout is bigger than vin
+scope.display_channel(2, enable=True)
+volt = scope.get_channel_measurement(2, 'vpp')
+
+vscalelist = [0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
+scopevscale = scope.get_channel_scale(2)
+index = vscalelist.index(scopevscale)
+
+while volt is None: # increase voltage scale until vpp is read
+    print("vscale ",  vscalelist[index])
+    scope.set_channel_scale(2, vscalelist[index] , use_closest_match=True)
+    time.sleep(1)
+    volt = scope.get_channel_measurement(2, 'vpp')
+    print("vpp: ", volt)
+    index = index + 1
 
 for freq in freqs:
     awg.set(AWG_CHANNEL, freq_hz=float(freq), enable=True)
     time.sleep(TIMEOUT)
-
+    
     if not args.NORMALIZE:
         volt = scope.get_channel_measurement(2, 'vpp')
         volts.append(volt)
