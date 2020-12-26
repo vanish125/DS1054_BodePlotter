@@ -126,12 +126,15 @@ scopevscale = scope.get_channel_scale(2)
 index = vscalelist.index(scopevscale)
 
 while volt is None: # increase voltage scale until vpp is read
-    print("vscale ",  vscalelist[index])
+    #print("vscale ",  vscalelist[index])
     scope.set_channel_scale(2, vscalelist[index] , use_closest_match=True)
     time.sleep(1)
     volt = scope.get_channel_measurement(2, 'vpp')
     print("vpp: ", volt)
-    index = index + 1
+    if index < 9
+        index = index + 3
+    else:
+        index = 12 
 
 for freq in freqs:
     awg.set(AWG_CHANNEL, freq_hz=float(freq), enable=True)
