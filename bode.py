@@ -12,7 +12,7 @@ import numpy as np
 import time
 from ds1054z import DS1054Z
 import argparse
-
+import dft
 import matplotlib.pyplot as plt
 
 import scipy.signal
@@ -33,6 +33,7 @@ parser.add_argument("--use_manual_settings", dest="MANUAL_SETTINGS", action="sto
 parser.add_argument("--output", dest="file", type=argparse.FileType("w"), help="Write the measured data to the given CSV file.")
 parser.add_argument("--no_plots", dest="PLOTS", action="store_false", help="When this option is set no plots are shown. Useful in combination with --output")
 parser.add_argument("--normalize", dest="NORMALIZE", action="store_true", help="Set this option if you dont want to get the absolute voltage levels on the output, but the value normalized on the input level.")
+parser.add_argument("--use_dft", dest="DFT", action="store_true", help="Use Discrete Fourier Transform on raw data; more accurate but slower.")
 
 args = parser.parse_args()
 
@@ -94,11 +95,16 @@ if not args.MANUAL_SETTINGS:
     # Center vertically
     scope.set_channel_offset(1, 0)
     scope.set_channel_offset(2, 0)
+    
+    # Display one period in 2 divs
+    period = (1/MIN_FREQ) / 2
+    scope.timebase_scale = period
+    scope.run()
 
     # Set the sensitivity according to the selected voltage
     scope.set_channel_scale(1, args.VOLTAGE / 3, use_closest_match=True)
     # Be a bit more pessimistic for the default voltage, because we run into problems if it is too confident
-    scope.set_channel_scale(2, args.VOLTAGE / 2, use_closest_match=True) 
+    scope.set_channel_scale(2, args.VOLTAGE / 3, use_closest_match=True) 
 
 freqs = np.linspace(MIN_FREQ, MAX_FREQ, num=STEP_COUNT)
 
@@ -118,6 +124,7 @@ awg.set(AWG_CHANNEL, freq_hz=float(freqs[0]), enable=True)
 time.sleep(0.05)
  
 # initialize voltage reading to see if scope is set in correct vertical scale, in case vout is bigger than vin
+scope.display_channel(1, enable=True)
 scope.display_channel(2, enable=True)
 volt = scope.get_channel_measurement(2, 'vpp')
 
@@ -140,18 +147,27 @@ for freq in freqs:
     awg.set(AWG_CHANNEL, freq_hz=float(freq), enable=True)
     time.sleep(TIMEOUT)
     
-    if not args.NORMALIZE:
-        volt = scope.get_channel_measurement(2, 'vpp')
-        volts.append(volt)
+    if args.DFT:
+        volt0, volt, phase = dft.measure_with_dft(scope, freq)
+        
     else:
         volt0 = scope.get_channel_measurement(1, 'vpp')
         volt = scope.get_channel_measurement(2, 'vpp')
-        volts.append(volt/volt0)
+        phase = scope.get_channel_measurement('CHAN1, CHAN2', 'rphase')
 
+        if phase:
+            phase = -1*phase
+
+    if not args.NORMALIZE:
+        volts.append(volt)
+    else:
+         volts.append(volt/volt0)
+         
+         
     # Use a better timebase
     if not args.MANUAL_SETTINGS:
-        # Display one period in 3 divs
-        period = (1/freq) / 3
+        # Display one period in 2 divs
+        period = (1/freq) / 2
         scope.timebase_scale = period
 
         # Use better voltage scale for next time
@@ -159,13 +175,6 @@ for freq in freqs:
             scope.set_channel_scale(2, volt / 2, use_closest_match=True)
         else:
             scope.set_channel_scale(2, AWG_VOLT / 2, use_closest_match=True)
-
-    # Measure phase
-    if args.PHASE:
-        phase = scope.get_channel_measurement('CHAN1, CHAN2', 'rphase')
-        if phase:
-            phase = -phase
-        phases.append(phase)
 
     print(freq)
 
