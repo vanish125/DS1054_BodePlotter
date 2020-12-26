@@ -131,7 +131,7 @@ while volt is None: # increase voltage scale until vpp is read
     time.sleep(1)
     volt = scope.get_channel_measurement(2, 'vpp')
     print("vpp: ", volt)
-    if index < 9
+    if index < 9:
         index = index + 3
     else:
         index = 12 
