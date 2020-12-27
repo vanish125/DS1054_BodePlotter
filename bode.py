@@ -104,7 +104,7 @@ if not args.MANUAL_SETTINGS:
     # Set the sensitivity according to the selected voltage
     scope.set_channel_scale(1, args.VOLTAGE / 3, use_closest_match=True)
     # Be a bit more pessimistic for the default voltage, because we run into problems if it is too confident
-    scope.set_channel_scale(2, args.VOLTAGE / 3, use_closest_match=True) 
+    scope.set_channel_scale(2, args.VOLTAGE / 2, use_closest_match=True) 
 
 freqs = np.linspace(MIN_FREQ, MAX_FREQ, num=STEP_COUNT)
 
@@ -123,25 +123,25 @@ phases = list()
 awg.set(AWG_CHANNEL, freq_hz=float(freqs[0]), enable=True)
 time.sleep(0.05)
  
-# initialize voltage reading to see if scope is set in correct vertical scale, in case vout is bigger than vin
-scope.display_channel(1, enable=True)
-scope.display_channel(2, enable=True)
-volt = scope.get_channel_measurement(2, 'vpp')
-
-vscalelist = [0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
-scopevscale = scope.get_channel_scale(2)
-index = vscalelist.index(scopevscale)
-
-while volt is None: # increase voltage scale until vpp is read
-    #print("vscale ",  vscalelist[index])
-    scope.set_channel_scale(2, vscalelist[index] , use_closest_match=True)
-    time.sleep(1)
+if not args.MANUAL_SETTINGS:# initialize voltage reading to see if scope is set in correct vertical scale, in case vout is bigger than vin
+    scope.display_channel(1, enable=True)
+    scope.display_channel(2, enable=True)
     volt = scope.get_channel_measurement(2, 'vpp')
-    print("vpp: ", volt)
-    if index < 9:
-        index = index + 3
-    else:
-        index = 12 
+
+    vscalelist = [0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
+    scopevscale = scope.get_channel_scale(2)
+    index = vscalelist.index(scopevscale)
+
+    while volt is None: # increase voltage scale until vpp is read
+        #print("vscale ",  vscalelist[index])
+        scope.set_channel_scale(2, vscalelist[index] , use_closest_match=True)
+        time.sleep(1)
+        volt = scope.get_channel_measurement(2, 'vpp')
+        print("vpp: ", volt)
+        if index < 9:
+            index = index + 3
+        else:
+            index = 12 
 
 for freq in freqs:
     awg.set(AWG_CHANNEL, freq_hz=float(freq), enable=True)
@@ -161,7 +161,11 @@ for freq in freqs:
     if not args.NORMALIZE:
         volts.append(volt)
     else:
-         volts.append(volt/volt0)
+        if volt0 < 0.01:
+            print("Input voltage is very low, check your connections and retry")
+            exit()
+        else:
+            volts.append(volt/volt0)
          
          
     # Use a better timebase
@@ -176,7 +180,7 @@ for freq in freqs:
         else:
             scope.set_channel_scale(2, AWG_VOLT / 2, use_closest_match=True)
 
-    print(freq)
+    print(freq, " volt0: ", volt0, " volt: ", volt, " phase: ", phase)
 
 # Write data to file if needed
 if args.file:
@@ -228,10 +232,13 @@ if not args.LINEAR:
 plt.show()
 
 if args.PHASE:
-    plt.plot(freqs, phases)
-    plt.title("Phase diagram (N=%d)"%STEP_COUNT)
-    plt.ylabel("Phase [°]")
-    plt.xlabel("Frequency [Hz]")
+    try:
+        plt.plot(freqs, phases)
+        plt.title("Phase diagram (N=%d)"%STEP_COUNT)
+        plt.ylabel("Phase [°]")
+        plt.xlabel("Frequency [Hz]")
+    except:
+        print("Phase was not correctly measured, check your connections")
 
     if args.SMOOTH:
         try:
