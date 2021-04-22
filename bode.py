@@ -149,6 +149,7 @@ for freq in freqs:
     
     if args.DFT:
         volt0, volt, phase = dft.measure_with_dft(scope, freq)
+        phases.append(phase)
         
     else:
         volt0 = scope.get_channel_measurement(1, 'vpp')
@@ -157,6 +158,7 @@ for freq in freqs:
 
         if phase:
             phase = -1*phase
+        phases.append(phase)
 
     if not args.NORMALIZE:
         volts.append(volt)
