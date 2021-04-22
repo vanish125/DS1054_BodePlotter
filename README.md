@@ -46,6 +46,7 @@ If you want more accurate results you can use the discrete Fourier transform on 
 
 To see the full list of possible options call `python bode.py --help`.
 
+On windows launch commands from Anaconda Prompt.
 
 # Output examples
 Here are some example measurements:
