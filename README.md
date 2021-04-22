@@ -23,7 +23,7 @@ Tip: Use a router to comunicate with your scope and assign a static IP to it.
 
 Connect the Channel 1 output of the FY6900 to CH1 of the DS1054Z and to the input of the component you want to test (DUT = Device under test). Connect CH2 of the DS1054Z to the output of the DUT.
 
-![Schematic](https://github.com/jbtronics/DS1054_BodePlotter/raw/master/examples/BodePlotter_schematic.svg?sanitize=true)
+![Schematic](https://github.com/limon93/DS1054_BodePlotter/raw/master/examples/BodePlotter_schematic.svg?sanitize=true)
 
 # Usage
 The basic syntax is `python bode.py MIN_FREQ MAX_FREQ [FREQ_COUNT]`, so if you, for example, want to test your DUT between 1kHz and 2.2Mhz, with 100 steps (default is 50),
@@ -49,19 +49,21 @@ To see the full list of possible options call `python bode.py --help`.
 
 # Output examples
 Here are some example measurements:
-## LC Parallel Resonance Circuit
-![LC Amplitude Diagram](https://github.com/jbtronics/DS1054_BodePlotter/raw/master/examples/LC_Amplitude.png)
-![LC Phase Diagram](https://github.com/jbtronics/DS1054_BodePlotter/raw/master/examples/LC_PHASE.png)
-
-## RL high pass
-![RL Amplitude](https://github.com/jbtronics/DS1054_BodePlotter/raw/master/examples/RL_Amplitude.png)
-![RL Phase](https://github.com/jbtronics/DS1054_BodePlotter/raw/master/examples/RL_Phase.png)
 
 ## RC low pass
-![RC Amplitude](https://github.com/jbtronics/DS1054_BodePlotter/raw/master/examples/RC_Amplitude.png)
-![RL Phase](https://github.com/jbtronics/DS1054_BodePlotter/raw/master/examples/RC_Phase.png)
+![RC Amplitude](https://github.com/limon93/DS1054_BodePlotter/raw/master/examples/RC_Amplitude.png)
+![RL Phase](https://github.com/limon93/DS1054_BodePlotter/raw/master/examples/RC_Phase.png)
+
+## LC Parallel Resonance Circuit
+![LC Amplitude Diagram](https://github.com/limon93/DS1054_BodePlotter/raw/master/examples/LC_Amplitude.png)
+![LC Phase Diagram](https://github.com/limon93/DS1054_BodePlotter/raw/master/examples/LC_PHASE.png)
+
+## RL high pass
+![RL Amplitude](https://github.com/limon93/DS1054_BodePlotter/raw/master/examples/RL_Amplitude.png)
+![RL Phase](https://github.com/limon93/DS1054_BodePlotter/raw/master/examples/RL_Phase.png)
+
 
 # License
-This program is licensed under the MIT License. See [LICENSE](https://github.com/jbtronics/DS1054_BodePlotter/blob/master/LICENSE) file for more info.
+This program is licensed under the MIT License. See [LICENSE](https://github.com/limon93/DS1054_BodePlotter/blob/master/LICENSE) file for more info.
 
 The FyGen.py library was taken from https://github.com/mattwach/fygen
