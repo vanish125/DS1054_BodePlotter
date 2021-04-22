@@ -50,7 +50,7 @@ To see the full list of possible options call `python bode.py --help`.
 # Output examples
 Here are some example measurements:
 
-## RC low pass
+## RC low pass (using --use_dft)
 ![RC Amplitude](https://github.com/limon93/DS1054_BodePlotter/raw/master/examples/RC_Amplitude.png)
 ![RL Phase](https://github.com/limon93/DS1054_BodePlotter/raw/master/examples/RC_Phase.png)
 
