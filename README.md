@@ -1,4 +1,5 @@
-Fork of the DS1054Z_BodePlotter adapted to use Feeltech FY6900 or similar signal generators
+Fork of the DS1054Z_BodePlotter adapted to use Feeltech FY6900 or similar signal generators.
+
 Tested with Anaconda 2020.11 on Windows 10 20H2
 
 # DS1054Z_BodePlotter
