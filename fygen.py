@@ -78,7 +78,7 @@ SET_INIT_STATE = {
     'freq_hz': 10000,
     'offset_volts': 0,
     'phase_degrees': 0,
-    'volts': 5,
+    'volts': 0,
     'wave': 'sin',
 }
 
@@ -1247,7 +1247,7 @@ def _make_volts_command(channel, max_volts, volts):
   if volts > max_volts:
     raise InvalidVoltageError('volts is too high: %g > %g' % (volts, max_volts))
 
-  return _make_command(channel, 'A%.2f' % volts)
+  return _make_command(channel, 'A%.3f' % volts)
 
 
 def _make_duty_cycle_command(channel, duty_cycle):
@@ -1271,7 +1271,7 @@ def _make_offset_volts_command(channel, min_volts, max_volts, volts):
     raise InvalidVoltageOffsetError(
         'offset_volts is too high: %g > %g' % (volts, max_volts))
 
-  return _make_command(channel, 'O%.2f' % volts)
+  return _make_command(channel, 'O%.3f' % volts)
 
 
 def _make_phase_command(channel, phase_degrees):
