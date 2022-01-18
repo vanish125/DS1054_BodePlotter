@@ -26,6 +26,7 @@ parser.add_argument("--awg_port", dest="AWG_PORT", default="/dev/ttyUSB0", help=
 parser.add_argument("--ds_ip", default="auto", dest="OSC_IP", help="The IP address of the DS1054Z. Set to auto, to auto discover the oscilloscope via Zeroconf")
 parser.add_argument("--linear", dest="LINEAR", action="store_true", help="Set this flag to use a linear scale")
 parser.add_argument("--awg_voltage", dest="VOLTAGE", default=5, type=float, help="The amplitude of the signal used for the generator")
+parser.add_argument("--awg_offset", dest="OFFSET", default=0, type=float, help="The offset of the signal used for the generator")
 parser.add_argument("--step_time", dest="TIMEOUT", default=0.00, type=float, help="The pause between to measurements in ms.")
 parser.add_argument("--phase", dest="PHASE", action="store_true", help="Set this flag if you want to plot the Phase diagram too")
 parser.add_argument("--no_smoothing", dest="SMOOTH", action="store_false", help="Set this to disable the smoothing of the data with a Savitzky–Golay filter")
@@ -67,6 +68,7 @@ TIMEOUT = args.TIMEOUT
 
 AWG_CHANNEL = 0          # //channel 1
 AWG_VOLT = args.VOLTAGE
+AWG_OFFSET = args.OFFSET
 
 print("Init AWG")
 
@@ -114,14 +116,14 @@ else:
     freqs = np.linspace(MIN_FREQ, MAX_FREQ, num=STEP_COUNT)
 
 # Set amplitude
-awg.set(AWG_CHANNEL, volts=AWG_VOLT, enable=True)
+awg.set(AWG_CHANNEL, volts=AWG_VOLT, offset_volts=AWG_OFFSET, enable=True)
 
 volts = list()
 phases = list()
 
 # We have to wait a bit before we measure the first value
 awg.set(AWG_CHANNEL, freq_hz=float(freqs[0]), enable=True)
-time.sleep(0.05)
+time.sleep(0.3)
  
 if not args.MANUAL_SETTINGS:# initialize voltage reading to see if scope is set in correct vertical scale, in case vout is bigger than vin
     scope.display_channel(1, enable=True)
